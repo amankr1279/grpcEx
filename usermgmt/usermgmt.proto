@@ -5,7 +5,7 @@ package usermgmt;
 option go_package = "github.com/amankr1279/grpcEx;go_usermgmt_grpcEx";
 
 service UserManagement {
-    rpc CreaeNewUser (NewUser) returns (User) {};
+    rpc CreateNewUser (NewUser) returns (User) {};
 }
 
 message NewUser {

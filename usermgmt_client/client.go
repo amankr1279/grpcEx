@@ -31,7 +31,7 @@ func main() {
 	new_users["Bob"] = 31
 
 	for name, age := range new_users {
-		resp, err := client.CreaeNewUser(ctx, &pb.NewUser{
+		resp, err := client.CreateNewUser(ctx, &pb.NewUser{
 			Name: name,
 			Age:  age,
 		})

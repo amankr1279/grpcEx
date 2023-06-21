@@ -17,7 +17,7 @@ type UserManagementServer struct {
 	pb.UnimplementedUserManagementServer
 }
 
-func (s *UserManagementServer) CreaeNewUser(ctx context.Context, in *pb.NewUser) (*pb.User, error) {
+func (s *UserManagementServer) CreateNewUser(ctx context.Context, in *pb.NewUser) (*pb.User, error) {
 	log.Printf("Received : %v\n", in.GetAge())
 	user_id := int32(rand.Intn(1000))
 
