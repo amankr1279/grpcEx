@@ -38,12 +38,12 @@ func (s *UserManagementServer) CreateNewUser(ctx context.Context, in *pb.NewUser
 	return created_user, nil
 }
 
-func (s *UserManagementServer)GetUsers(ctx context.Context, in *pb.GetUsersParams) (*pb.UserList, error) {
-	return s.usersList, nil 
+func (s *UserManagementServer) GetUsers(ctx context.Context, in *pb.GetUsersParams) (*pb.UserList, error) {
+	return s.usersList, nil
 }
 func main() {
 	fmt.Println("Hello server")
-	
+
 	user_mgmt_server := NewUserManagementServer()
 	err := user_mgmt_server.RunServer()
 	if err != nil {
@@ -52,7 +52,7 @@ func main() {
 
 }
 
-func (server *UserManagementServer) RunServer() error{
+func (server *UserManagementServer) RunServer() error {
 	lis, err := net.Listen("tcp", port)
 
 	if err != nil {
@@ -60,10 +60,7 @@ func (server *UserManagementServer) RunServer() error{
 	}
 
 	s := grpc.NewServer()
-	pb.RegisterUserManagementServer(s, &UserManagementServer{
-		UnimplementedUserManagementServer: pb.UnimplementedUserManagementServer{},
-		usersList:                         &pb.UserList{},
-	})
+	pb.RegisterUserManagementServer(s, server)
 	log.Printf("Server listening at %v:%v", lis, port)
 
 	return s.Serve(lis)
