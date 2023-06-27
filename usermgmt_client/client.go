@@ -44,4 +44,11 @@ Age: %v
 Id :  %v
 `, resp.GetName(), resp.GetAge(), resp.GetId())
 	}
+
+	params := &pb.GetUsersParams{}
+	resp, err := client.GetUsers(ctx, params)
+	if err != nil {
+		log.Fatalf("Failed to get response of get all users : %v\n", err)
+	}
+	log.Println(resp.GetUsers())
 }
