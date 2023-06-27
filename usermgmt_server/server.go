@@ -15,33 +15,56 @@ const port = ":50051"
 
 type UserManagementServer struct {
 	pb.UnimplementedUserManagementServer
+	usersList *pb.UserList // array of user pointers
 }
 
+func NewUserManagementServer() *UserManagementServer {
+	return &UserManagementServer{
+		usersList: &pb.UserList{},
+	}
+}
 func (s *UserManagementServer) CreateNewUser(ctx context.Context, in *pb.NewUser) (*pb.User, error) {
 	log.Printf("Received New user reeuest with age : %v\n", in.GetAge())
 	log.Printf("Context : %+v\n", ctx)
 	user_id := int32(rand.Intn(1000))
 
-	return &pb.User{
+	created_user := &pb.User{
 		Name: in.GetName(),
 		Age:  in.GetAge(),
 		Id:   user_id,
-	}, nil
+	}
+	s.usersList.Users = append(s.usersList.Users, created_user)
+
+	return created_user, nil
+}
+
+func (s *UserManagementServer)GetUsers(ctx context.Context, in *pb.GetUsersParams) (*pb.UserList, error) {
+	return s.usersList, nil 
 }
 func main() {
 	fmt.Println("Hello server")
+	
+	user_mgmt_server := NewUserManagementServer()
+	err := user_mgmt_server.RunServer()
+	if err != nil {
+		log.Fatalf("Failed to serve : %v\n", err)
+	}
 
+}
+
+func (server *UserManagementServer) RunServer() error{
 	lis, err := net.Listen("tcp", port)
 
 	if err != nil {
 		log.Fatalf("Failed to listen : %v\n", err)
 	}
 
-	server := grpc.NewServer()
-	pb.RegisterUserManagementServer(server, &UserManagementServer{})
-	log.Printf("Server lsitening at %v:%v", lis, port)
+	s := grpc.NewServer()
+	pb.RegisterUserManagementServer(s, &UserManagementServer{
+		UnimplementedUserManagementServer: pb.UnimplementedUserManagementServer{},
+		usersList:                         &pb.UserList{},
+	})
+	log.Printf("Server listening at %v:%v", lis, port)
 
-	if err = server.Serve(lis); err != nil {
-		log.Fatalf("Failed to serve : %v\n", err)
-	}
+	return s.Serve(lis)
 }
